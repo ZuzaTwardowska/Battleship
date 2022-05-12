@@ -1,0 +1,13 @@
+
+.boardsWrapper{
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr, 1fr;
+    grid-template-areas: '. .';
+    width: 80%;
+    margin: 5vh auto 0;
+}
+
+.boardCell{
+    text-align: center;
+}

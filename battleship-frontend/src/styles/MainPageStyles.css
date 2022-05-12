@@ -1,0 +1,18 @@
+
+.menuWrapper{
+    width: 40%;
+    margin: 5vh auto;
+    border: solid 2px rgb(110, 168, 189);
+    border-radius: 5px;
+    text-align: center;
+    padding: 4vw;
+}
+.menuWrapper button{
+    padding: 0.5vw;
+    font-size: 1.4vw;
+    background-color:rgb(110, 168, 189);
+    border-radius: 5px;
+    color: white;
+    border-color: transparent;
+    cursor: pointer;
+}

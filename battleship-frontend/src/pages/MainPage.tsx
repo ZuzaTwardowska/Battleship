@@ -1,8 +1,14 @@
-import {Link} from "react-router-dom"
-function MainPage() {
-    return (
-      <Link to="/simulation"><button>Start simulation</button></Link>
-    );
-  }
+import { Link } from "react-router-dom";
+import "../styles/MainPageStyles.css";
 
-  export default MainPage;
+function MainPage() {
+  return (
+    <div className="menuWrapper">
+      <Link to="/simulation">
+        <button>Start simulation</button>
+      </Link>
+    </div>
+  );
+}
+
+export default MainPage;
