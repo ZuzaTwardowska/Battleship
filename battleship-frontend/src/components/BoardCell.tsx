@@ -1,5 +1,5 @@
 import { State } from "./BoardComponent";
-import "../styles/BoardStyle.css"
+import "../styles/BoardStyle.css";
 
 interface BoardCellProps {
   state: State;
@@ -10,12 +10,16 @@ function BoardCell(props: BoardCellProps) {
     <div
       className={
         "cell" +
-        (props.state === State.Ship ? " cellShip" : "") +
-        (props.state === State.Crashed ? " cellCrashed" : "")
+        (props.state === State.Ship || props.state === State.CrashedShip
+          ? " cellShip"
+          : "") +
+        (props.state === State.Crashed || props.state === State.CrashedShip
+          ? " cellCrashed"
+          : "")
       }
     >
-      {props.state === State.Crashed && <p>X</p>}
-      </div>
+      {(props.state === State.Crashed || props.state === State.CrashedShip) && <p>X</p>}
+    </div>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, Ref, useEffect, useImperativeHandle, useState } from "react";
 import BoardCell from "./BoardCell";
 import "../styles/BoardStyle.css";
 import { CellModel } from "../Models/Simulation";
@@ -7,14 +7,21 @@ export enum State {
   Empty,
   Ship,
   Crashed,
+  CrashedShip,
 }
 
 interface BoardComponentProps {
-  shipsLocations: Array<CellModel>|undefined;
+  shipsLocations: Array<CellModel> | undefined;
 }
 
-function BoardComponent(props: BoardComponentProps) {
+export interface BoardComponentRef{
+  markOpponentsMove:(cell:CellModel)=>void
+}
+
+const BoardComponent=forwardRef((props: BoardComponentProps, ref: Ref<BoardComponentRef>)=>{
   const [cells, setCells] = useState<Array<Array<State>>>(createEmptyBoard());
+
+  useImperativeHandle(ref, () => ({ markOpponentsMove }));
 
   function createEmptyBoard() {
     var temp: Array<Array<State>> = [];
@@ -28,8 +35,16 @@ function BoardComponent(props: BoardComponentProps) {
     return temp;
   }
 
+  function markOpponentsMove(cell: CellModel) {
+    var temp = [...cells];
+    if (temp[cell.row][cell.column] === State.Ship)
+      temp[cell.row][cell.column] = State.CrashedShip;
+    else temp[cell.row][cell.column] = State.Crashed;
+    setCells(temp);
+  }
+
   useEffect(() => {
-    if(props.shipsLocations === undefined) return;
+    if (props.shipsLocations === undefined) return;
     var temp = createEmptyBoard();
     props.shipsLocations.forEach((cell: CellModel) => {
       temp[cell.row][cell.column] = State.Ship;
@@ -48,6 +63,6 @@ function BoardComponent(props: BoardComponentProps) {
       ))}
     </div>
   );
-}
+});
 
 export default BoardComponent;

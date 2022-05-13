@@ -6,14 +6,11 @@
     display: inline-block;
     box-sizing:border-box;
     margin:0.1vw;
+    vertical-align: middle;
 }
 
 .cellShip{
     background-color: rgb(113, 157, 165);
-}
-
-.cellCrashed{
-    background-color: rgb(241, 208, 208);
 }
 
 .cellCrashed p{

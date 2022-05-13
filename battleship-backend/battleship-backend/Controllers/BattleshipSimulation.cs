@@ -24,7 +24,14 @@ namespace battleship_backend.Controllers
         {
             Player player1 = new Player();
             Player player2 = new Player();
-            return new Simulation(new List<Cell>(), new List<Cell>(), player1.getShipsPositions(), player2.getShipsPositions());
+            List<Cell> player1Moves = new List<Cell>();
+            List<Cell> player2Moves = new List<Cell>();
+            while(!player1.wasDefeated() && !player2.wasDefeated()){
+                player1Moves.Add(player1.makeShot(player2));
+                if(player2.wasDefeated()) break;
+                player2Moves.Add(player2.makeShot(player1));
+            }
+            return new Simulation(player1Moves, player2Moves, player1.getShipsPositions(), player2.getShipsPositions());
         }
     }
 }
