@@ -11,3 +11,19 @@
 .boardCell{
     text-align: center;
 }
+
+.buttonsDiv{
+    margin-top: 2vh;
+    text-align: center;
+}
+
+.buttonsDiv button{
+    padding: 0.5vw;
+    font-size: 1.2vw;
+    background-color:rgb(110, 168, 189);
+    border-radius: 5px;
+    color: white;
+    border-color: transparent;
+    cursor: pointer;
+    margin: 0 0.5vw;
+}

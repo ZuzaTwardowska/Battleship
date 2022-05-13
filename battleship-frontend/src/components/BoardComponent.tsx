@@ -1,20 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BoardCell from "./BoardCell";
-import "../styles/BoardStyle.css"
+import "../styles/BoardStyle.css";
+import { CellModel } from "../Models/Simulation";
 
 export enum State {
   Empty,
   Ship,
   Crashed,
 }
-class BoardComponent extends React.Component<{}, { cells: any }> {
-  constructor(props: any) {
-    super(props);
-    this.state = { cells: this.createEmptyBoard() };
-    this.setState({});
-  }
 
-  createEmptyBoard(): Array<Array<State>> {
+interface BoardComponentProps {
+  shipsLocations: Array<CellModel>|undefined;
+}
+
+function BoardComponent(props: BoardComponentProps) {
+  const [cells, setCells] = useState<Array<Array<State>>>(createEmptyBoard());
+
+  function createEmptyBoard() {
     var temp: Array<Array<State>> = [];
     for (var i = 0; i < 10; i++) {
       var row: Array<State> = [];
@@ -26,19 +28,26 @@ class BoardComponent extends React.Component<{}, { cells: any }> {
     return temp;
   }
 
-  render() {
-    return (
-      <div className="board">
-        {this.state.cells.map((row: Array<State>, rowIndex: number) => (
-          <div className="boardRow" key={rowIndex}>
-            {row.map((cell: State, colIndex) => (
-              <BoardCell key={rowIndex + "" + colIndex} state={cell}/>
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  }
+  useEffect(() => {
+    if(props.shipsLocations === undefined) return;
+    var temp = createEmptyBoard();
+    props.shipsLocations.forEach((cell: CellModel) => {
+      temp[cell.row][cell.column] = State.Ship;
+    });
+    setCells(temp);
+  }, [props.shipsLocations]);
+
+  return (
+    <div className="board">
+      {cells.map((row: Array<State>, rowIndex: number) => (
+        <div className="boardRow" key={rowIndex}>
+          {row.map((cell: State, colIndex) => (
+            <BoardCell key={rowIndex + "" + colIndex} state={cell} />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default BoardComponent;
