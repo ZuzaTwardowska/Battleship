@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BoardCell from "./BoardCell";
 import "../styles/BoardStyle.css";
-import { CellModel } from "../Models/Simulation";
+import { CellModel } from "../Models/CellModel";
 
 export enum State {
   Empty,
@@ -49,6 +49,7 @@ const PlaceShipsBoardComponent = (props: BoardComponentProps) => {
               state={cell}
               onClick={props.onClickFunction}
               cell={{ row: rowIndex, column: colIndex } as CellModel}
+              showShipLocations={true}
             />
           ))}
         </div>

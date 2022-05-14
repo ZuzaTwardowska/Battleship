@@ -7,7 +7,7 @@ import BoardComponent, {
   BoardComponentRef,
 } from "../components/BoardComponent";
 import { SimulationModel } from "../Models/Simulation";
-import "../styles/SimulationPageStyle.css";
+import "../styles/SimulationAndGameStyle.css";
 
 function SimulationPage() {
   const service = APIservice();
@@ -63,6 +63,7 @@ function SimulationPage() {
           <BoardComponent
             shipsLocations={simulationData?.player1Ships}
             ref={board1}
+            showShipLocations={true}
           />
         </div>
         <div className="boardCell">
@@ -70,6 +71,7 @@ function SimulationPage() {
           <BoardComponent
             shipsLocations={simulationData?.player2Ships}
             ref={board2}
+            showShipLocations={true}
           />
         </div>
       </div>

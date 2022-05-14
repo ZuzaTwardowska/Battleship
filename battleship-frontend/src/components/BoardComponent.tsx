@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import BoardCell from "./BoardCell";
 import "../styles/BoardStyle.css";
-import { CellModel } from "../Models/Simulation";
+import { CellModel } from "../Models/CellModel";
 
 export enum State {
   Empty,
@@ -18,6 +18,7 @@ export enum State {
 
 interface BoardComponentProps {
   shipsLocations: Array<CellModel> | undefined;
+  showShipLocations: boolean;
 }
 
 export interface BoardComponentRef {
@@ -64,7 +65,7 @@ const BoardComponent = forwardRef(
         {cells.map((row: Array<State>, rowIndex: number) => (
           <div className="boardRow" key={rowIndex}>
             {row.map((cell: State, colIndex) => (
-              <BoardCell key={rowIndex + "" + colIndex} state={cell} />
+              <BoardCell key={rowIndex + "" + colIndex} state={cell} showShipLocations={props.showShipLocations}/>
             ))}
           </div>
         ))}

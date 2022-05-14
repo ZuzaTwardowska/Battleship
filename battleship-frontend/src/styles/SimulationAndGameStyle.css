@@ -47,3 +47,28 @@
     text-align: center;
     margin-top: 2vh;
 }
+
+.placeShipsPageWrapper{
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr, 1fr, 1fr;
+    grid-template-areas: '. . .';
+    width: 80%;
+    margin: 5vh auto 0;
+}
+
+.nowPlacingDiv{
+    font-size: 1.4vw;
+    margin-bottom: 2vh;
+}
+
+.placeShipsButton{
+    padding: 0.5vw;
+    font-size: 1.2vw;
+    background-color:rgb(110, 168, 189);
+    border-radius: 5px;
+    color: white;
+    border-color: transparent;
+    cursor: pointer;
+    margin: 3vh 0.5vw 0;
+}
