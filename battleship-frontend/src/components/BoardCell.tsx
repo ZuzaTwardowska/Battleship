@@ -1,11 +1,20 @@
 import { State } from "./BoardComponent";
 import "../styles/BoardStyle.css";
+import { CellModel } from "../Models/Simulation";
 
 interface BoardCellProps {
   state: State;
+  onClick?: (e:any, cell:CellModel)=>void;
+  cell?:CellModel;
 }
 
 function BoardCell(props: BoardCellProps) {
+
+  const onClickAction=(e:any)=>{
+    if(props.onClick !== undefined && props.cell!==undefined){
+      props.onClick(e, props.cell);
+    }
+  }
   return (
     <div
       className={
@@ -17,7 +26,7 @@ function BoardCell(props: BoardCellProps) {
           ? " cellCrashed"
           : "")
       }
-    >
+    onClick={(e:any)=>onClickAction(e)}>
       {(props.state === State.Crashed || props.state === State.CrashedShip) && <p>X</p>}
     </div>
   );

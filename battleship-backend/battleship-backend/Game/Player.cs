@@ -33,7 +33,7 @@ namespace battleship_backend
 
                         for(int i = 0; i < size; i++)
                         {
-                            if (!Cell.isValid(row,col) || board[row, col] != CellState.Empty) continue;
+                            if (!Cell.isValid(row,col) || board[row, col] != CellState.Empty) break;
                             shipCellLocations.Add(new Cell(row, col));
                             if (isVertical) col++;
                             else row++;
@@ -60,7 +60,7 @@ namespace battleship_backend
         {
             bool res = false;
             if (board[shot.Row, shot.Column] == CellState.Ship) res = true;
-            board[shot.Row, shot.Column] = CellState.Crushed;
+            board[shot.Row, shot.Column] = CellState.Crashed;
             return res;
         }
 
@@ -70,7 +70,7 @@ namespace battleship_backend
             bool wasSuccessful = opponent.registerShot(shot);
             if (!wasSuccessful)
             {
-                opponentsBoard[shot.Row, shot.Column] = CellState.Crushed;
+                opponentsBoard[shot.Row, shot.Column] = CellState.Crashed;
             }
             else
             {
@@ -132,9 +132,17 @@ namespace battleship_backend
             {
                 int col = rand.Next(0, 10);
                 int row = rand.Next(0, 10);
-                if (opponentsBoard[row, col] == CellState.Empty) shot = new Cell(row, col);
+                if (opponentsBoard[row, col] == CellState.Empty && !isSingleEmpty(row,col)) shot = new Cell(row, col);
             }
             return shot;
+        }
+
+        private bool isSingleEmpty(int row, int col){
+            if(Cell.isValid(row - 1,col) && opponentsBoard[row - 1, col] != CellState.Crashed) return false;
+            if(Cell.isValid(row + 1,col) && opponentsBoard[row + 1, col] != CellState.Crashed) return false;
+            if(Cell.isValid(row,col - 1) && opponentsBoard[row, col - 1] != CellState.Crashed) return false;
+            if(Cell.isValid(row,col + 1) && opponentsBoard[row, col + 1] != CellState.Crashed) return false;
+            return true;
         }
 
         private (bool,bool) calculateLastShotShipDirection()
@@ -151,7 +159,7 @@ namespace battleship_backend
         {
             if (!Cell.isValid(row+vector[0], col+vector[1])) return null;
             if (opponentsBoard[row + vector[0], col + vector[1]] == CellState.Empty) return new Cell(row + vector[0], col + vector[1]);
-            if (opponentsBoard[row + vector[0], col + vector[1]] == CellState.Crushed) return null;
+            if (opponentsBoard[row + vector[0], col + vector[1]] == CellState.Crashed) return null;
             return getNextGuessInDirection(row + vector[0], col + vector[1], vector);
         }
 
@@ -166,45 +174,5 @@ namespace battleship_backend
             }
             return positions;
         }
-    }
-
-    public class Cell
-    {
-        public int Row { get; private set; }
-        public int Column { get; private set; }
-
-        public Cell(int row, int column)
-        {
-            Row = row;
-            Column = column;
-        }
-
-        public static bool isValid(int row, int column){
-            if(row < 0) return false;
-            if(row >= Player.BOARD_SIZE) return false;
-            if(column < 0) return false;
-            if(column >= Player.BOARD_SIZE) return false;
-            return true;
-        }
-    }
-
-    public class Ship
-    {
-        public List<Cell> location { get; private set; }
-        int size;
-
-        public Ship(int size, List<Cell> location)
-        {
-            this.size = size;
-            this.location = location;
-        }
-
-    }
-
-    public enum CellState
-    {
-        Empty,
-        Ship,
-        Crushed
     }
 }

@@ -15,4 +15,9 @@
     color: white;
     border-color: transparent;
     cursor: pointer;
+    margin-top: 2vh;
+}
+
+.menuWrapper button:hover{
+    letter-spacing: 0.1vw;
 }

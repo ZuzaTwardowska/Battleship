@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
+import GamePage from "./pages/GamePage";
 import MainPage from "./pages/MainPage";
 import SimulationPage from "./pages/SimulationPage";
 
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/simulation" element={<SimulationPage />} />
+        <Route path="/game" element={<GamePage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -17,7 +17,7 @@
     text-align: center;
 }
 
-.buttonsDiv button{
+.buttonsDiv button, .bottomControls button{
     padding: 0.5vw;
     font-size: 1.2vw;
     background-color:rgb(110, 168, 189);
@@ -26,4 +26,24 @@
     border-color: transparent;
     cursor: pointer;
     margin: 0 0.5vw;
+}
+
+.bottomControls{
+    width: 80%;
+    margin: 4vh auto 0;
+    text-align: right;
+}
+
+.instructionsDiv{
+    width: 60%;
+    margin: auto;
+    margin-top: 2vh;
+    padding: 1vw;
+    border: solid 1px lightblue;
+    border-radius: 5px;
+}
+
+.placeShipsBoardCell{
+    text-align: center;
+    margin-top: 2vh;
 }
