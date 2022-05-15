@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace battleship_backend.Controllers
 {
@@ -12,12 +11,6 @@ namespace battleship_backend.Controllers
     public class CalculateMoveController : ControllerBase
     {
         const int boardSize=10;
-        private readonly ILogger<CalculateMoveController> _logger;
-
-        public CalculateMoveController(ILogger<CalculateMoveController> logger)
-        {
-            _logger = logger;
-        }
 
         [HttpPost]
         public Cell GetMove([FromBody] CalculateMoveQuery calculateMoveQuery)

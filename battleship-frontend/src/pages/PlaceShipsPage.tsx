@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { APIservice } from "../ApiServices/APIservice";
 import { ServiceState } from "../ApiServices/APIutilities";
 import { getLoadOpponentConfig } from "../ApiServices/configCreator";
+import ErrorComponent from "../components/ErrorComponents";
 import { PlaceShipsInstruction } from "../components/Instructions";
+import { LoadingComponent } from "../components/LoadingComponent";
 import PlaceShipsBoardComponent from "../components/PlaceShipsBoardComponent";
 import { CellModel } from "../Models/CellModel";
 import { LoadedOpponent } from "../Models/LoadedOpponents";
@@ -17,6 +19,7 @@ interface PlaceShipsPageProps {
 
 function PlaceShipsPage(props: PlaceShipsPageProps) {
   const service = APIservice();
+  const [openErrorToast, setOpenErrorToast] = useState<boolean>(false);
   const [yourShips, setYourShips] = useState<Array<CellModel>>([]);
   const [placedShips, setPlacedShips] = useState<Array<ShipModel>>([]);
   const [toBePlacedShips, setToBePlacedShips] = useState<Array<number>>(
@@ -32,6 +35,9 @@ function PlaceShipsPage(props: PlaceShipsPageProps) {
         (service.result! as unknown as LoadedOpponent).ships
       );
       props.setShiplocation(yourShips);
+    }
+    if (service.state === ServiceState.Error) {
+      setOpenErrorToast(true);
     }
   }, [service.result, service.state]);
 
@@ -61,9 +67,7 @@ function PlaceShipsPage(props: PlaceShipsPageProps) {
     setCurrentShip([...currentShip, cell]);
     setYourShips([...yourShips, cell]);
     if (currentShip.length + 1 === toBePlacedShips[0]) {
-      setToBePlacedShips(
-        toBePlacedShips.filter((val: number, id: number) => id !== 0)
-      );
+      setToBePlacedShips(toBePlacedShips.filter((_, id: number) => id !== 0));
       setPlacedShips([...placedShips, { locations: currentShip } as ShipModel]);
       setCurrentShip([]);
     }
@@ -79,7 +83,7 @@ function PlaceShipsPage(props: PlaceShipsPageProps) {
         <PlaceShipsInstruction />
       </div>
       <div className="placeShipsPageWrapper">
-        <div>
+        <div className="asideDiv">
           <div>
             <div className="nowPlacingDiv">
               <h5>Now placing:</h5>
@@ -106,7 +110,7 @@ function PlaceShipsPage(props: PlaceShipsPageProps) {
             onClickFunction={clickOnCell}
           />
         </div>
-        <div>
+        <div className="asideDiv">
           <h5>Already placed:</h5>
           {placedShips.map((item: ShipModel) => (
             <p>{item.locations.length + 1} segments</p>
@@ -123,6 +127,8 @@ function PlaceShipsPage(props: PlaceShipsPageProps) {
           <button>Back to menu</button>
         </Link>
       </div>
+      {service.state === ServiceState.InProgress && <LoadingComponent />}
+      {openErrorToast && <ErrorComponent closeToast={setOpenErrorToast} />}
     </div>
   );
 }

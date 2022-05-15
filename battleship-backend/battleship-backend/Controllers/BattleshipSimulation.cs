@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace battleship_backend.Controllers
 {
@@ -12,12 +11,6 @@ namespace battleship_backend.Controllers
     public class SimulationController : ControllerBase
     {
         const int boardSize=10;
-        private readonly ILogger<SimulationController> _logger;
-
-        public SimulationController(ILogger<SimulationController> logger)
-        {
-            _logger = logger;
-        }
 
         [HttpGet]
         public Simulation Get()

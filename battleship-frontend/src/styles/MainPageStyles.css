@@ -1,23 +1,23 @@
 
 .menuWrapper{
-    width: 40%;
+    width: 25%;
     margin: 5vh auto;
     border: solid 2px rgb(110, 168, 189);
     border-radius: 5px;
     text-align: center;
-    padding: 4vw;
+    padding: 10vh 4vw;
 }
 .menuWrapper button{
-    padding: 0.5vw;
+    padding: 1vw;
     font-size: 1.4vw;
     background-color:rgb(110, 168, 189);
     border-radius: 5px;
     color: white;
     border-color: transparent;
     cursor: pointer;
-    margin-top: 2vh;
+    margin: 4vh 0;
 }
 
 .menuWrapper button:hover{
-    letter-spacing: 0.1vw;
+    letter-spacing: 0.2vw;
 }

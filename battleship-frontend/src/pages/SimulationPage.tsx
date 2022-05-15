@@ -6,18 +6,22 @@ import { getSimulationConfig } from "../ApiServices/configCreator";
 import BoardComponent, {
   BoardComponentRef,
 } from "../components/BoardComponent";
+import ErrorComponent from "../components/ErrorComponents";
+import { LoadingComponent } from "../components/LoadingComponent";
 import WinnerBanner from "../components/WinnerBanner";
 import { SimulationModel } from "../Models/Simulation";
 import "../styles/SimulationAndGameStyle.css";
 
 function SimulationPage() {
   const service = APIservice();
+  const [openErrorToast, setOpenErrorToast] = useState<boolean>(false);
   const [simulationData, setSimulationData] = useState<
     SimulationModel | undefined
   >(undefined);
   const [winner, setWinner] = useState("");
   const board1 = useRef<BoardComponentRef>(null);
   const board2 = useRef<BoardComponentRef>(null);
+  var timer:NodeJS.Timeout;
 
   const runAgain = () => {
     setSimulationData(undefined);
@@ -26,10 +30,13 @@ function SimulationPage() {
     board2.current?.clearBoard();
   };
 
-  const loadSimulation = () => service.execute!(getSimulationConfig(), "");
+  const loadSimulation = () => {
+    if(timer!==undefined) clearTimeout(timer);
+    service.execute!(getSimulationConfig(), "");
+  }
 
   const startSimulation = () => {
-    const timer = setTimeout(() => makeMoveOnBoard2(0), 1000);
+    timer = setTimeout(() => makeMoveOnBoard2(0), 1000);
     return () => clearTimeout(timer);
   };
 
@@ -41,10 +48,10 @@ function SimulationPage() {
         simulationData!.player2Moves[moveNumber]
       )
     ) {
-      const timer = setTimeout(() => setWinner("Player2"), 600);
+      timer = setTimeout(() => setWinner("Player2"), 600);
       return () => clearTimeout(timer);
     }
-    const timer = setTimeout(() => makeMoveOnBoard2(moveNumber + 1), 600);
+    timer = setTimeout(() => makeMoveOnBoard2(moveNumber + 1), 600);
     return () => clearTimeout(timer);
   };
 
@@ -56,16 +63,19 @@ function SimulationPage() {
         simulationData!.player1Moves[moveNumber]
       )
     ) {
-      const timer = setTimeout(() => setWinner("Player1"), 600);
+      timer = setTimeout(() => setWinner("Player1"), 600);
       return () => clearTimeout(timer);
     }
-    const timer = setTimeout(() => makeMoveOnBoard1(moveNumber), 600);
+    timer = setTimeout(() => makeMoveOnBoard1(moveNumber), 600);
     return () => clearTimeout(timer);
   };
 
   useEffect(() => {
     if (service.state === ServiceState.Fetched) {
       setSimulationData(service.result! as unknown as SimulationModel);
+    }
+    if (service.state === ServiceState.Error) {
+      setOpenErrorToast(true);
     }
   }, [service.result, service.state]);
 
@@ -110,6 +120,8 @@ function SimulationPage() {
           onClickFunction={runAgain}
         />
       )}
+      {service.state === ServiceState.InProgress && <LoadingComponent />}
+      {openErrorToast && <ErrorComponent closeToast={setOpenErrorToast} />}
     </div>
   );
 }

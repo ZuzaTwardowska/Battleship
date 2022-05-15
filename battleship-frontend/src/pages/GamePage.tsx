@@ -6,6 +6,8 @@ import { getNextMoveConfig } from "../ApiServices/configCreator";
 import BoardComponent, {
   BoardComponentRef,
 } from "../components/BoardComponent";
+import ErrorComponent from "../components/ErrorComponents";
+import { LoadingComponent } from "../components/LoadingComponent";
 import WinnerBanner from "../components/WinnerBanner";
 import { CalculateMoveQuery } from "../Models/CalculateMoveQuery";
 import { CellModel } from "../Models/CellModel";
@@ -14,6 +16,7 @@ import PlaceShipsPage from "./PlaceShipsPage";
 
 function GamePage() {
   const service = APIservice();
+  const [openErrorToast, setOpenErrorToast] = useState<boolean>(false);
   const [yourShips, setYourShips] = useState<Array<CellModel>>([]);
   const [playersShips, setPlayersShips] = useState<Array<CellModel>>([]);
   const [isYourMove, setIsYourMove] = useState<boolean>(true);
@@ -36,6 +39,9 @@ function GamePage() {
         service.result! as unknown as CellModel
       );
       setIsYourMove(true);
+    }
+    if (service.state === ServiceState.Error) {
+      setOpenErrorToast(true);
     }
   }, [service.result, service.state]);
 
@@ -99,8 +105,14 @@ function GamePage() {
         </div>
       )}
       {winner.length > 0 && (
-        <WinnerBanner winner={winner} onClickFunction={playAgain} buttonText={"Play Again"}/>
+        <WinnerBanner
+          winner={winner}
+          onClickFunction={playAgain}
+          buttonText={"Play Again"}
+        />
       )}
+      {service.state === ServiceState.InProgress && <LoadingComponent />}
+      {openErrorToast && <ErrorComponent closeToast={setOpenErrorToast} />}
     </div>
   );
 }

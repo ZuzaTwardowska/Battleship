@@ -58,8 +58,9 @@
 }
 
 .nowPlacingDiv{
-    font-size: 1.4vw;
+    font-size: 1.5vw;
     margin-bottom: 2vh;
+    font-weight: 600;
 }
 
 .placeShipsButton{
@@ -71,6 +72,12 @@
     border-color: transparent;
     cursor: pointer;
     margin: 3vh 0.5vw 0;
+}
+
+.asideDiv{
+    text-align: center;
+    padding-top: 10vh;
+    width: 20vw;
 }
 
 .winnerDiv{
@@ -109,4 +116,33 @@
     left:0;
     width: 100%;
     height: 100%;
+}
+
+.errorDiv{
+    background-color: rgb(110, 168, 189);
+    width: fit-content;
+    padding: 1vw;
+    color: white;
+    font-size: 1.2vw;
+    border-radius: 10px;
+    position: absolute;
+    left: 42%;
+    bottom: 8%;
+}
+
+.errorDiv button{
+    background-color: transparent;
+    cursor: pointer;
+    border: white solid 1px;
+    width: 2vw;
+    height: 2vw;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.5vw;
+    display: inline;
+}
+
+.errorDiv p{
+    display: inline;
+    margin-left: 1vw;
 }
