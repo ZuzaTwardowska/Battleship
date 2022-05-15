@@ -80,7 +80,7 @@ namespace battleship_backend
             return shot;
         }
 
-        private Cell calculateNextShot()
+        public Cell calculateNextShot()
         {
             Random rand = new Random();
             Cell shot = null;
@@ -173,6 +173,20 @@ namespace battleship_backend
                 positions.AddRange(s.location);
             }
             return positions;
+        }
+
+        public void setOpponentsBoard(Cell[] missedShots, Cell[] successfulShots){
+            opponentsBoard = new CellState[BOARD_SIZE, BOARD_SIZE];
+            foreach(Cell c in missedShots){
+                opponentsBoard[c.Row,c.Column] = CellState.Crashed;
+            }
+            foreach(Cell c in successfulShots){
+                opponentsBoard[c.Row,c.Column] = CellState.Ship;
+            }
+        }
+
+        public void setLastSuccessfulShot(Cell shot){
+            lastSuccessfulShot=shot;
         }
     }
 }
