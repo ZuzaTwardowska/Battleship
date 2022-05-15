@@ -1,22 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { APIservice } from "../ApiServices/APIservice";
+import { ServiceState } from "../ApiServices/APIutilities";
+import { getLoadOpponentConfig } from "../ApiServices/configCreator";
 import { PlaceShipsInstruction } from "../components/Instructions";
 import PlaceShipsBoardComponent from "../components/PlaceShipsBoardComponent";
 import { CellModel } from "../Models/CellModel";
+import { LoadedOpponent } from "../Models/LoadedOpponents";
 import { isValidCellToFormAShip, ShipModel } from "../Models/ShipModel";
 import "../styles/SimulationAndGameStyle.css";
 
-interface PlaceShipsPageProps{
-    setShiplocation:(arr:Array<CellModel>)=>void;
+interface PlaceShipsPageProps {
+  setShiplocation: (arr: Array<CellModel>) => void;
+  setPlayersShips: React.Dispatch<React.SetStateAction<CellModel[]>>;
 }
 
-function PlaceShipsPage(props:PlaceShipsPageProps) {
+function PlaceShipsPage(props: PlaceShipsPageProps) {
+  const service = APIservice();
   const [yourShips, setYourShips] = useState<Array<CellModel>>([]);
   const [placedShips, setPlacedShips] = useState<Array<ShipModel>>([]);
   const [toBePlacedShips, setToBePlacedShips] = useState<Array<number>>(
     getAllShipsToBePlaced()
   );
   const [currentShip, setCurrentShip] = useState<Array<CellModel>>([]);
+
+  const loadOpponent = () => service.execute!(getLoadOpponentConfig(), "");
+
+  useEffect(() => {
+    if (service.state === ServiceState.Fetched) {
+      props.setPlayersShips(
+        (service.result! as unknown as LoadedOpponent).ships
+      );
+      props.setShiplocation(yourShips);
+    }
+  }, [service.result, service.state]);
 
   function getAllShipsToBePlaced(): Array<number> {
     var res = [];
@@ -40,6 +57,7 @@ function PlaceShipsPage(props:PlaceShipsPageProps) {
 
   const putCell = (cell: CellModel) => {
     if (!isValidCellToFormAShip(cell, yourShips, currentShip)) return;
+    if (toBePlacedShips.length === 0) return;
     setCurrentShip([...currentShip, cell]);
     setYourShips([...yourShips, cell]);
     if (currentShip.length + 1 === toBePlacedShips[0]) {
@@ -49,6 +67,10 @@ function PlaceShipsPage(props:PlaceShipsPageProps) {
       setPlacedShips([...placedShips, { locations: currentShip } as ShipModel]);
       setCurrentShip([]);
     }
+  };
+
+  const startGame = () => {
+    loadOpponent();
   };
 
   return (
@@ -90,7 +112,9 @@ function PlaceShipsPage(props:PlaceShipsPageProps) {
             <p>{item.locations.length + 1} segments</p>
           ))}
           {toBePlacedShips.length === 0 && (
-            <button onClick={()=>props.setShiplocation(yourShips)}className="placeShipsButton">Accept and Play</button>
+            <button onClick={startGame} className="placeShipsButton">
+              Accept and Play
+            </button>
           )}
         </div>
       </div>

@@ -6,6 +6,7 @@ import { getSimulationConfig } from "../ApiServices/configCreator";
 import BoardComponent, {
   BoardComponentRef,
 } from "../components/BoardComponent";
+import WinnerBanner from "../components/WinnerBanner";
 import { SimulationModel } from "../Models/Simulation";
 import "../styles/SimulationAndGameStyle.css";
 
@@ -14,8 +15,16 @@ function SimulationPage() {
   const [simulationData, setSimulationData] = useState<
     SimulationModel | undefined
   >(undefined);
+  const [winner, setWinner] = useState("");
   const board1 = useRef<BoardComponentRef>(null);
   const board2 = useRef<BoardComponentRef>(null);
+
+  const runAgain = () => {
+    setSimulationData(undefined);
+    setWinner("");
+    board1.current?.clearBoard();
+    board2.current?.clearBoard();
+  };
 
   const loadSimulation = () => service.execute!(getSimulationConfig(), "");
 
@@ -27,16 +36,30 @@ function SimulationPage() {
   const makeMoveOnBoard1 = (moveNumber: number) => {
     if (simulationData === undefined) return;
     if (moveNumber >= simulationData!.player2Moves.length) return;
-    board1.current?.markOpponentsMove(simulationData!.player2Moves[moveNumber]);
-    const timer = setTimeout(() => makeMoveOnBoard2(moveNumber + 1), 1000);
+    if (
+      board1.current?.markOpponentsMove(
+        simulationData!.player2Moves[moveNumber]
+      )
+    ) {
+      const timer = setTimeout(() => setWinner("Player2"), 600);
+      return () => clearTimeout(timer);
+    }
+    const timer = setTimeout(() => makeMoveOnBoard2(moveNumber + 1), 600);
     return () => clearTimeout(timer);
   };
 
   const makeMoveOnBoard2 = (moveNumber: number) => {
     if (simulationData === undefined) return;
     if (moveNumber >= simulationData!.player1Moves.length) return;
-    board2.current?.markOpponentsMove(simulationData!.player1Moves[moveNumber]);
-    const timer = setTimeout(() => makeMoveOnBoard1(moveNumber), 1000);
+    if (
+      board2.current?.markOpponentsMove(
+        simulationData!.player1Moves[moveNumber]
+      )
+    ) {
+      const timer = setTimeout(() => setWinner("Player1"), 600);
+      return () => clearTimeout(timer);
+    }
+    const timer = setTimeout(() => makeMoveOnBoard1(moveNumber), 600);
     return () => clearTimeout(timer);
   };
 
@@ -80,6 +103,13 @@ function SimulationPage() {
           <button>Back to menu</button>
         </Link>
       </div>
+      {winner.length > 0 && (
+        <WinnerBanner
+          winner={winner}
+          buttonText={"Run Again"}
+          onClickFunction={runAgain}
+        />
+      )}
     </div>
   );
 }

@@ -19,17 +19,41 @@ export enum State {
 interface BoardComponentProps {
   shipsLocations: Array<CellModel> | undefined;
   showShipLocations: boolean;
+  canMakeMove?: boolean;
+  setCanMakeMove?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface BoardComponentRef {
-  markOpponentsMove: (cell: CellModel) => void;
+  markOpponentsMove: (cell: CellModel) => boolean;
+  missedShots: Array<CellModel>;
+  successfulShots: Array<CellModel>;
+  lastSuccessfulShot: CellModel | null;
+  clearBoard: () => void;
 }
 
 const BoardComponent = forwardRef(
   (props: BoardComponentProps, ref: Ref<BoardComponentRef>) => {
     const [cells, setCells] = useState<Array<Array<State>>>(createEmptyBoard());
+    const [missedShots, setMissedShots] = useState<Array<CellModel>>([]);
+    const [successfulShots, setSuccessfulShots] = useState<Array<CellModel>>(
+      []
+    );
+    const [lastSuccessfulShot, setLastSuccessfulShot] =
+      useState<CellModel | null>(null);
 
-    useImperativeHandle(ref, () => ({ markOpponentsMove }));
+    useImperativeHandle(ref, () => ({
+      markOpponentsMove,
+      missedShots,
+      successfulShots,
+      lastSuccessfulShot,
+      clearBoard,
+    }));
+
+    function clearBoard() {
+      setCells(createEmptyBoard());
+      setMissedShots([]);
+      setSuccessfulShots([]);
+    }
 
     function createEmptyBoard() {
       var temp: Array<Array<State>> = [];
@@ -43,12 +67,47 @@ const BoardComponent = forwardRef(
       return temp;
     }
 
-    function markOpponentsMove(cell: CellModel) {
+    function markOpponentsMove(cell: CellModel): boolean {
       var temp = [...cells];
-      if (temp[cell.row][cell.column] === State.Ship)
+      if (temp[cell.row][cell.column] === State.Ship) {
+        setLastSuccessfulShot(cell);
+        setSuccessfulShots([...successfulShots, cell]);
         temp[cell.row][cell.column] = State.CrashedShip;
-      else temp[cell.row][cell.column] = State.Crashed;
+      } else {
+        setLastSuccessfulShot(null);
+        setMissedShots([...missedShots, cell]);
+        temp[cell.row][cell.column] = State.Crashed;
+      }
       setCells(temp);
+      return checkIfWasBeaten();
+    }
+
+    function checkIfWasBeaten(): boolean{
+      for (var i = 0; i < 10; i++) {
+        for (var j = 0; j < 10; j++) {
+          if(cells[i][j]===State.Ship) return false;
+        }
+      }
+      return true;
+    }
+
+    function makeYourMoveInGameMode(cell: CellModel) {
+      if (props.canMakeMove === undefined || props.canMakeMove === false)
+        return;
+      if (
+        missedShots.filter(
+          (c: CellModel) => c.row === cell.row && c.column === cell.column
+        ).length !== 0
+      )
+        return;
+      if (
+        successfulShots.filter(
+          (c: CellModel) => c.row === cell.row && c.column === cell.column
+        ).length !== 0
+      )
+        return;
+      markOpponentsMove(cell);
+      props.setCanMakeMove!(false);
     }
 
     useEffect(() => {
@@ -65,7 +124,15 @@ const BoardComponent = forwardRef(
         {cells.map((row: Array<State>, rowIndex: number) => (
           <div className="boardRow" key={rowIndex}>
             {row.map((cell: State, colIndex) => (
-              <BoardCell key={rowIndex + "" + colIndex} state={cell} showShipLocations={props.showShipLocations}/>
+              <BoardCell
+                key={rowIndex + "" + colIndex}
+                state={cell}
+                showShipLocations={props.showShipLocations}
+                onClick={(e: any, cell: CellModel) =>
+                  makeYourMoveInGameMode(cell)
+                }
+                cell={{ row: rowIndex, column: colIndex } as CellModel}
+              />
             ))}
           </div>
         ))}

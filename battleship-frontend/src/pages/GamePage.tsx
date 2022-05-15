@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { APIservice } from "../ApiServices/APIservice";
 import { ServiceState } from "../ApiServices/APIutilities";
-import { getLoadOpponentConfig, getSimulationConfig } from "../ApiServices/configCreator";
+import { getNextMoveConfig } from "../ApiServices/configCreator";
 import BoardComponent, {
   BoardComponentRef,
 } from "../components/BoardComponent";
+import WinnerBanner from "../components/WinnerBanner";
+import { CalculateMoveQuery } from "../Models/CalculateMoveQuery";
 import { CellModel } from "../Models/CellModel";
-import { LoadedOpponent } from "../Models/LoadedOpponents";
-import { SimulationModel } from "../Models/Simulation";
 import "../styles/SimulationAndGameStyle.css";
 import PlaceShipsPage from "./PlaceShipsPage";
 
@@ -16,14 +16,26 @@ function GamePage() {
   const service = APIservice();
   const [yourShips, setYourShips] = useState<Array<CellModel>>([]);
   const [playersShips, setPlayersShips] = useState<Array<CellModel>>([]);
+  const [isYourMove, setIsYourMove] = useState<boolean>(true);
+  const [winner, setWinner] = useState("");
   const board1 = useRef<BoardComponentRef>(null);
   const board2 = useRef<BoardComponentRef>(null);
 
-  const loadOpponent = () => service.execute!(getLoadOpponentConfig(), "");
+  const playAgain = () => {
+    setYourShips([]);
+    setPlayersShips([]);
+    setWinner("");
+    setIsYourMove(true);
+    board1.current?.clearBoard();
+    board2.current?.clearBoard();
+  };
 
   useEffect(() => {
     if (service.state === ServiceState.Fetched) {
-      setPlayersShips((service.result! as unknown as LoadedOpponent).ships);
+      board1.current?.markOpponentsMove(
+        service.result! as unknown as CellModel
+      );
+      setIsYourMove(true);
     }
   }, [service.result, service.state]);
 
@@ -31,16 +43,34 @@ function GamePage() {
     setYourShips(ships);
   };
 
+  useEffect(() => {
+    if (board1.current?.successfulShots.length === yourShips.length) {
+      setWinner("Player1");
+      return;
+    }
+    if (board2.current?.successfulShots.length === playersShips.length) {
+      setWinner("You");
+      return;
+    }
+    if (isYourMove === false) {
+      service.execute!(getNextMoveConfig(), {
+        missedShots: board1.current?.missedShots,
+        successfulShots: board1.current?.successfulShots,
+        lastSuccessfulShot: board1.current?.lastSuccessfulShot,
+      } as CalculateMoveQuery);
+    }
+  }, [isYourMove]);
+
   return (
     <div>
       {yourShips.length === 0 && (
-        <PlaceShipsPage setShiplocation={addUsersShips} />
+        <PlaceShipsPage
+          setShiplocation={addUsersShips}
+          setPlayersShips={setPlayersShips}
+        />
       )}
       {yourShips.length !== 0 && (
         <div>
-          <div className="buttonsDiv">
-            <button onClick={loadOpponent}>Load Opponent</button>
-          </div>
           <div className="boardsWrapper">
             <div className="boardCell">
               <h2>Your Board</h2>
@@ -55,7 +85,9 @@ function GamePage() {
               <BoardComponent
                 shipsLocations={playersShips}
                 ref={board2}
-                showShipLocations={true}
+                showShipLocations={false}
+                canMakeMove={isYourMove && winner.length === 0}
+                setCanMakeMove={setIsYourMove}
               />
             </div>
           </div>
@@ -65,6 +97,9 @@ function GamePage() {
             </Link>
           </div>
         </div>
+      )}
+      {winner.length > 0 && (
+        <WinnerBanner winner={winner} onClickFunction={playAgain} buttonText={"Play Again"}/>
       )}
     </div>
   );

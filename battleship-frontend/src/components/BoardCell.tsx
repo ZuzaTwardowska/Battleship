@@ -5,13 +5,13 @@ import { CellModel } from "../Models/CellModel";
 interface BoardCellProps {
   state: State;
   onClick?: (e: any, cell: CellModel) => void;
-  cell?: CellModel;
+  cell: CellModel;
   showShipLocations: boolean;
 }
 
 function BoardCell(props: BoardCellProps) {
   const onClickAction = (e: any) => {
-    if (props.onClick !== undefined && props.cell !== undefined) {
+    if (props.onClick !== undefined) {
       props.onClick(e, props.cell);
     }
   };
