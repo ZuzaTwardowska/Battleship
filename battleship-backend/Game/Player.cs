@@ -15,6 +15,7 @@ namespace battleship_backend
             placeShipsOnBoard();
         }
 
+        /// <summary>Randomly place ships on board.</summary>
         private void placeShipsOnBoard()
         {
             for(int size = 5; size > 1; size--)
@@ -47,6 +48,10 @@ namespace battleship_backend
             }
         }
 
+        /// <summary>Check if player was defeated/all their ships were 
+        /// destroyed.</summary>
+        /// <returns>True if player was defeated.
+        /// False otherwise.</returns>
         public bool wasDefeated(){
             for(int i = 0; i < 10; i++){
                 for(int j = 0; j < 10; j++){
@@ -56,6 +61,9 @@ namespace battleship_backend
             return true;
         }
 
+        /// <summary>Change players board state after opponents shot.</summary>
+        /// <param name="shot">Cell that was shot by the opponent.</param>
+        /// <returns>True if shot was successful. False otherwise.</returns>
         public bool registerShot(Cell shot)
         {
             bool res = false;
@@ -64,6 +72,10 @@ namespace battleship_backend
             return res;
         }
 
+        /// <summary>Pick cell to be shot, register it on the opponentsBoard
+        /// and inform opponent about the shot.</summary>
+        /// <param name="opponent">Opponent that will have to register this shot</param>
+        /// <returns>Cell that will be shot.</returns>
         public Cell makeShot(Player opponent)
         {
             Cell shot = calculateNextShot();
@@ -80,6 +92,9 @@ namespace battleship_backend
             return shot;
         }
 
+
+        /// <summary>Pick a cell to be shot.</summary>
+        /// <returns>Cell that will be shot.</returns>
         public Cell calculateNextShot()
         {
             Random rand = new Random();
@@ -124,6 +139,8 @@ namespace battleship_backend
             return shot;
         }
 
+        /// <summary>Randomize a cell to be shot.</summary>
+        /// <returns>Cell to be shot.</returns>
         private Cell randomizeShot()
         {
             Cell shot = null;
@@ -137,6 +154,11 @@ namespace battleship_backend
             return shot;
         }
 
+        /// <summary>Check if cell is surrounded by crashed cells without a ship.</summary>
+        /// <param name="row">Row number</param>
+        /// <param name="column">Column number</param>
+        /// <returns>True if cell is surrounded by crashed cells without a ship.
+        /// False otherwise.</returns>
         private bool isSingleEmpty(int row, int col){
             if(Cell.isValid(row - 1,col) && opponentsBoard[row - 1, col] != CellState.Crashed) return false;
             if(Cell.isValid(row + 1,col) && opponentsBoard[row + 1, col] != CellState.Crashed) return false;
@@ -145,7 +167,10 @@ namespace battleship_backend
             return true;
         }
 
-        private (bool,bool) calculateLastShotShipDirection()
+        /// <summary>Check if ship's direction can be determined from lastSuccessfulShot.</summary>
+        /// <returns>(true,true) if the ship is vertical. (true, false) if the ship is horizontal.
+        /// (false, false) if direction cannot be determined.</returns>
+        private (bool, bool) calculateLastShotShipDirection()
         {
             (int row, int col) = (lastSuccessfulShot.Row, lastSuccessfulShot.Column);
             if (Cell.isValid(row + 1, col) && opponentsBoard[row + 1, col] == CellState.Ship) return (true, true);
@@ -155,6 +180,11 @@ namespace battleship_backend
             return (false, false);
         }
 
+        /// <summary>Find cell to shot in ships direction, next valid cell surrounding last shot.</summary>
+        /// <param name="row">Row number</param>
+        /// <param name="column">Column number</param>
+        /// <param name="vector">Int[2] vector to change row and/or column value.</param>
+        /// <returns>Cell to shot in the ships direction.</returns>
         private Cell getNextGuessInDirection(int row, int col, int[] vector)
         {
             if (!Cell.isValid(row+vector[0], col+vector[1])) return null;
@@ -163,8 +193,12 @@ namespace battleship_backend
             return getNextGuessInDirection(row + vector[0], col + vector[1], vector);
         }
 
+        /// <summary>Add ship to board.</summary>
+        /// <param name="shipPositions">List of cells creating a ship.</param>
         private void setShipOnBoard(List<Cell> shipPositions) => shipPositions.ForEach((Cell c) => board[c.Row, c.Column] = CellState.Ship);
 
+        /// <summary>Return a list of ships' cells.</summary>
+        /// <returns>List of cells containing all ships' segments.</returns>
         public List<Cell> getShipsPositions()
         {
             List<Cell> positions = new List<Cell>();
@@ -175,6 +209,11 @@ namespace battleship_backend
             return positions;
         }
 
+        /// <summary>Load information about opponents board.</summary>
+        /// <param name="missedShots">List of cells that were already shot
+        /// and do not contain any ship segments.</param>
+        /// <param name="successfulShots">List of cells that were already shot
+        /// and contain ship segments.</param>
         public void setOpponentsBoard(Cell[] missedShots, Cell[] successfulShots){
             opponentsBoard = new CellState[BOARD_SIZE, BOARD_SIZE];
             foreach(Cell c in missedShots){
@@ -185,6 +224,8 @@ namespace battleship_backend
             }
         }
 
+        /// <summary>CLoad last successful shot made on opponents board.</summary>
+        /// <param name="shot">Last successful shot.</param>
         public void setLastSuccessfulShot(Cell shot){
             lastSuccessfulShot=shot;
         }

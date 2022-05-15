@@ -12,6 +12,12 @@ namespace battleship_backend.Controllers
     {
         const int boardSize=10;
 
+        /// <summary>
+        /// POST Post current game information, to get next move.
+        /// </summary>
+        /// <param name="calculateMoveQuery">current game information: missedShots: Cell[],
+        /// successfulShots: Cell[], lastSuccessfulShot: Cell</param>
+        /// <returns>Returns Cell as next move</returns>
         [HttpPost]
         public Cell GetMove([FromBody] CalculateMoveQuery calculateMoveQuery)
         {

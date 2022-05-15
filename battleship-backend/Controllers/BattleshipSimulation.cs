@@ -12,6 +12,10 @@ namespace battleship_backend.Controllers
     {
         const int boardSize=10;
 
+        /// <summary>
+        /// GET Get game simulation
+        /// </summary>
+        /// <returns>Returns new Simulation</returns>
         [HttpGet]
         public Simulation Get()
         {

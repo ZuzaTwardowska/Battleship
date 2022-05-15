@@ -12,6 +12,11 @@ namespace battleship_backend
             Column = column;
         }
 
+        /// <summary>Check if row and column are inside the board.</summary>
+        /// <param name="row">Row number</param>
+        /// <param name="column">Column number</param>
+        /// <returns>True if row and column are inside the board.
+        /// False otherwise.</returns>
         public static bool isValid(int row, int column){
             if(row < 0) return false;
             if(row >= Player.BOARD_SIZE) return false;

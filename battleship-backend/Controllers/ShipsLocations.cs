@@ -12,6 +12,10 @@ namespace battleship_backend.Controllers
     {
         const int boardSize=10;
 
+        /// <summary>
+        /// GET Get ships locations for the game
+        /// </summary>
+        /// <returns>Returns shipLocations</returns>
         [HttpGet]
         public ShipsLocations Get()
         {
