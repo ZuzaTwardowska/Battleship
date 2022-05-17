@@ -74,7 +74,6 @@ const BoardComponent = forwardRef(
         setSuccessfulShots([...successfulShots, cell]);
         temp[cell.row][cell.column] = State.CrashedShip;
       } else {
-        setLastSuccessfulShot(null);
         setMissedShots([...missedShots, cell]);
         temp[cell.row][cell.column] = State.Crashed;
       }
