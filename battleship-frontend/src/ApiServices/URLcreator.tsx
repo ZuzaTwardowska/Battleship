@@ -1,4 +1,4 @@
-const apiUrl = "https://localhost:5001";
+const apiUrl = "http://localhost:5000";
 
 export const getSimulationURL = (): string => apiUrl + "/Simulation";
 

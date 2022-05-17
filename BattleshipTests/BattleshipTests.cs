@@ -30,7 +30,7 @@ namespace BattleshipTests
             Player p = new Player();
             List<Cell> shipsLocations = p.getShipsPositions();
             Random rand = new Random();
-            bool output = p.registerShot(shipsLocations[rand.Next(0,shipsLocations.Count)]);
+            bool output = p.registerShot(shipsLocations[rand.Next(0, shipsLocations.Count)]);
             Assert.AreEqual(output, true);
         }
         [TestMethod]
@@ -40,7 +40,7 @@ namespace BattleshipTests
             List<Cell> shipsLocations = p.getShipsPositions();
             Cell shot = new Cell(0, 0);
             Random rand = new Random();
-            while(shipsLocations.Exists((Cell c)=>c.Row==shot.Row && c.Column == shot.Column))
+            while (shipsLocations.Exists((Cell c) => c.Row == shot.Row && c.Column == shot.Column))
             {
                 shot = new Cell(rand.Next(0, Player.BOARD_SIZE), rand.Next(0, Player.BOARD_SIZE));
             }
@@ -58,10 +58,10 @@ namespace BattleshipTests
         }
 
         [TestMethod]
-        [DataRow(new int[]{1, 2}, true)]
-        [DataRow(new int[]{1, -2}, false)]
-        [DataRow(new int[]{-1, 2}, false)]
-        [DataRow(new int[]{0,0}, true)]
+        [DataRow(new int[] { 1, 2 }, true)]
+        [DataRow(new int[] { 1, -2 }, false)]
+        [DataRow(new int[] { -1, 2 }, false)]
+        [DataRow(new int[] { 0, 0 }, true)]
         public void CheckIfCellValidationWorks(int[] input, bool expectedOutput)
         {
             bool output = Cell.isValid(input[0], input[1]);

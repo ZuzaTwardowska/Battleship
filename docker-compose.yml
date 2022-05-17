@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  backend:
+    build: 
+      context: ./battleship-backend
+      dockerfile: Dockerfile
+    container_name: battleship-backend
+    ports:
+      - '5000:80'
+      - '5001:81'
+    image: ${DOCKER_REGISTRY-}backend
+
+  frontend:
+    build: 
+      context: ./battleship-frontend
+      dockerfile: Dockerfile
+    container_name: battleship-frontend
+    ports:
+      - '3000:3000'
+    image: ${DOCKER_REGISTRY-}frontend
+    stdin_open: true
+    tty: true
