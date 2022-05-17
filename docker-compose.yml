@@ -8,7 +8,6 @@ services:
     container_name: battleship-backend
     ports:
       - '5000:80'
-      - '5001:81'
     image: ${DOCKER_REGISTRY-}backend
 
   frontend:
